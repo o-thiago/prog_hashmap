@@ -1,36 +1,13 @@
-# C Flake Template
+# Hashmap - PROG2 (UNIR)
 
-Minimal, editor-agnostic C study environment with Clang, static analysis,
-sanitizers, and formatting.
+Implementação de tabela hash com encadeamento separado em C23 (`src/main.c`)
+desenvolvida para a disciplina de Programação II da Universidade Federal de
+Rondônia (UNIR), comparando o tempo de inserção e busca entre capacidades prima
+(`1031`) e potência de dois (`1024`).
 
-## Tools Included
-
-- **LSP & Editor Support**: `clangd` (reads `.clangd` /
-  `build/compile_commands.json` for completion and live `.clang-tidy`
-  diagnostics), `neocmakelsp` (configured in `.neocmake.toml`).
-- **Static Analysis**: `clang-tidy` (configured in `.clang-tidy`), `cppcheck`,
-  `cmake-lint`.
-- **Dynamic Analysis & Sanitizers**: AddressSanitizer (ASan) and
-  UndefinedBehaviorSanitizer (UBSan) enabled on Debug builds, plus `lldb`.
-- **Formatters**: `clang-format` (configured in `.clang-format`), `cmake-format`,
-  `nixfmt`.
-
-## Usage
+## Executar
 
 ```sh
-# Enter development shell
 nix develop
-
-# Build and run (includes ASan & UBSan)
 cmake -S . -B build && cmake --build build && ./build/c_app
-
-# Run static analysis
-cppcheck --enable=style --inconclusive --error-exitcode=1 src/
-clang-tidy src/main.c
-
-# Verify build with GCC (sanity check for autograders/professors)
-cmake -B build-gcc -DCMAKE_C_COMPILER=gcc && cmake --build build-gcc
-
-# Run pre-commit formatting & checks
-nix flake check
 ```
