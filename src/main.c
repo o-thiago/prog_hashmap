@@ -1,4 +1,4 @@
-#include <inttypes.h>
+#include <bits/time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -88,7 +88,7 @@ static void hashmap_free(struct hashmap *map)
     map->capacity = 0;
 }
 
-static constexpr int64_t NS_PER_SEC = 1'000'000'000;
+static constexpr signed long int NS_PER_SEC = 1'000'000'000;
 enum {
     RANDOM_SEED = 0xCAFEEE,
     AMOUNT_ELEMENTS = 10'000,
@@ -109,8 +109,8 @@ static size_t op_find(const struct hashmap *map, const size_t key)
     return hashmap_find(map, key, &found) ? found.frequency : 0;
 }
 
-static int64_t measure_fn(const struct hashmap *map, const size_t *keys,
-                          const size_t count, const hashmap_fn op)
+static long long int measure_fn(const struct hashmap *map, const size_t *keys,
+                                const size_t count, const hashmap_fn op)
 {
     struct timespec start;
     struct timespec end;
@@ -127,10 +127,13 @@ static int64_t measure_fn(const struct hashmap *map, const size_t *keys,
 
 int main(void)
 {
-
     size_t *insert_keys = malloc(AMOUNT_ELEMENTS * sizeof *insert_keys);
     size_t *search_keys = malloc(AMOUNT_SEARCHES * sizeof *search_keys);
-    if (!insert_keys || !search_keys) return EXIT_FAILURE;
+    if (!insert_keys || !search_keys) {
+        free(insert_keys);
+        free(search_keys);
+        return EXIT_FAILURE;
+    }
 
     srandom(RANDOM_SEED);
     for (size_t i = 0; i < AMOUNT_ELEMENTS; ++i)
@@ -148,13 +151,12 @@ int main(void)
             return EXIT_FAILURE;
         }
 
-        const int64_t insert_ns =
+        const long long int insert_ns =
             measure_fn(&map, insert_keys, AMOUNT_ELEMENTS, op_insert);
-        const int64_t find_ns =
+        const long long int find_ns =
             measure_fn(&map, search_keys, AMOUNT_SEARCHES, op_find);
 
-        printf("Hash (capacity=%zu) -> inserir: %" PRId64
-               "ns | buscar: %" PRId64 "ns\n",
+        printf("Hash (capacity=%zu) -> inserir: %lld ns | buscar: %lld ns\n",
                map.capacity, insert_ns, find_ns);
 
         hashmap_free(&map);
